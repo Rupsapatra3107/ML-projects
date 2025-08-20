@@ -1,0 +1,56 @@
+from transformers import pipeline
+
+# Load emotion detection model
+emotion = pipeline("text-classification", model="bhadresh-savani/distilbert-base-uncased-emotion")
+
+# Predefined songs for each mood
+mood_playlist = {
+    "joy": [
+        {"title": "Happy", "artist": "Pharrell Williams", "url": "https://open.spotify.com/track/60nZcImufyMA1MKQY3dcCH"},
+        {"title": "Can't Stop the Feeling!", "artist": "Justin Timberlake", "url": "https://open.spotify.com/track/6JV2JOEocMgcZxYSZelKcc"}
+    ],
+    "sadness": [
+        {"title": "Someone Like You", "artist": "Adele", "url": "https://open.spotify.com/track/4kflIGfjdZJW4ot2ioixTB"},
+        {"title": "Let Her Go", "artist": "Passenger", "url": "https://open.spotify.com/track/3ZFTkvIE7kyPt6Nu3PEa7V"}
+    ],
+    "anger": [
+        {"title": "Lose Yourself", "artist": "Eminem", "url": "https://open.spotify.com/track/1u8c2t2Cy7UBoG4ArRcF5g"},
+        {"title": "Break Stuff", "artist": "Limp Bizkit", "url": "https://open.spotify.com/track/5vV3bFXnN6D6N3iUUcFvFc"}
+    ],
+    "fear": [
+        {"title": "Creep", "artist": "Radiohead", "url": "https://open.spotify.com/track/3HfB5hBU0dmBt8T0iCmH42"},
+        {"title": "Everybody's Got Something to Hide", "artist": "The Beatles", "url": "https://open.spotify.com/track/3KfbEIOC7YIv90FIfNSZpo"}
+    ],
+    "love": [
+        {"title": "Perfect", "artist": "Ed Sheeran", "url": "https://open.spotify.com/track/0tgVpDi06FyKpA1z0VMD4v"},
+        {"title": "All of Me", "artist": "John Legend", "url": "https://open.spotify.com/track/3U4isOIWM3VvDubwSI3y7a"}
+    ],
+    "surprise": [
+        {"title": "Uptown Funk", "artist": "Mark Ronson ft. Bruno Mars", "url": "https://open.spotify.com/track/32OlwWuMpZ6b0aN2RZOeMS"},
+        {"title": "Shake It Off", "artist": "Taylor Swift", "url": "https://open.spotify.com/track/5WfhX6gQXxZzWEuPZP4gFe"}
+    ],
+    "neutral": [
+        {"title": "Sunflower", "artist": "Post Malone & Swae Lee", "url": "https://open.spotify.com/track/3KkXRkHbMCARz0aVfEt68P"},
+        {"title": "Blinding Lights", "artist": "The Weeknd", "url": "https://open.spotify.com/track/0VjIjW4GlUZAMYd2vXMi3b"}
+    ]
+}
+
+# Detect mood from text
+def detect_text_mood(text):
+    result = emotion(text)
+    mood = result[0]['label'].lower()
+    return mood
+
+# Recommend songs
+def recommend_song(mood):
+    return mood_playlist.get(mood, mood_playlist["neutral"])
+
+# Main program
+if __name__ == "__main__":
+    user_input = input("How are you feeling today?\n> ")
+    mood = detect_text_mood(user_input)
+    print(f"\nDetected mood: {mood.capitalize()}")
+    print("Recommended songs:\n")
+    for song in recommend_song(mood):
+        print(f"- {song['title']} by {song['artist']}")
+        print(f"  Listen: {song['url']}\n")
